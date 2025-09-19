@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from './supabaseClient';
 import './App.css';
 
 function generateInviteCode(name) {
@@ -11,28 +12,46 @@ function App() {
   const [email, setEmail] = useState('');
   const [registered, setRegistered] = useState(false);
   const [inviteCode, setInviteCode] = useState('');
-  const [guests, setGuests] = useState(() => {
-    const saved = localStorage.getItem('birthdayGuests');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [guests, setGuests] = useState([]);
+  const [loadingGuests, setLoadingGuests] = useState(false);
 
   const [adminMode, setAdminMode] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
   const [adminError, setAdminError] = useState('');
 
-  const ADMIN_PASS = 'uncle2025'; // change as needed
+  const ADMIN_PASS = 'uncle2025'; 
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     if (!name || !email) return;
     const code = generateInviteCode(name);
-    const newGuest = { name, email, code };
-    const updatedGuests = [...guests, newGuest];
-    setGuests(updatedGuests);
-    localStorage.setItem('birthdayGuests', JSON.stringify(updatedGuests));
-    setInviteCode(code);
-    setRegistered(true);
+    // Insert guest into Supabase
+    const { data, error } = await supabase
+      .from('guests')
+      .insert([{ name, email, code }]);
+    if (!error) {
+      setInviteCode(code);
+      setRegistered(true);
+    } else {
+      alert('Registration failed. Please try again.');
+    }
   };
+
+  // Fetch guests from Supabase for admin view
+  useEffect(() => {
+    if (adminMode === true) {
+      setLoadingGuests(true);
+      supabase
+        .from('guests')
+        .select('*')
+        .then(({ data, error }) => {
+          if (!error) {
+            setGuests(data);
+          }
+          setLoadingGuests(false);
+        });
+    }
+  }, [adminMode, registered]);
 
   return (
     <div className="birthday-container">
@@ -95,7 +114,9 @@ function App() {
       {adminMode === true && (
         <div className="admin-view">
           <h3>Registered Guests</h3>
-          {guests.length === 0 ? (
+          {loadingGuests ? (
+            <p>Loading guests...</p>
+          ) : guests.length === 0 ? (
             <p>No guests have registered yet.</p>
           ) : (
             <table>
@@ -108,7 +129,7 @@ function App() {
               </thead>
               <tbody>
                 {guests.map((g, idx) => (
-                  <tr key={idx}>
+                  <tr key={g.id || idx}>
                     <td>{g.name}</td>
                     <td>{g.email}</td>
                     <td>{g.code}</td>
