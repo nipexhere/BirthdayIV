@@ -8,6 +8,20 @@ function generateInviteCode(name) {
 }
 
 function App() {
+  const [searchTerm, setSearchTerm] = useState('');
+  // Delete guest from Supabase
+  const handleDeleteGuest = async (guestId) => {
+    await supabase.from('guests').delete().eq('id', guestId);
+    // Refresh guest list
+    supabase
+      .from('guests')
+      .select('*')
+      .then(({ data, error }) => {
+        if (!error) {
+          setGuests(data);
+        }
+      });
+  };
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [registered, setRegistered] = useState(false);
@@ -114,6 +128,13 @@ function App() {
       {adminMode === true && (
         <div className="admin-view">
           <h3>Registered Guests</h3>
+          <input
+            type="text"
+            placeholder="Search by name, email, or code"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem', borderRadius: '6px', border: '1px solid #ffd700', fontSize: '1rem' }}
+          />
           {loadingGuests ? (
             <p>Loading guests...</p>
           ) : guests.length === 0 ? (
@@ -125,16 +146,31 @@ function App() {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Invite Code</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {guests.map((g, idx) => (
-                  <tr key={g.id || idx}>
-                    <td>{g.name}</td>
-                    <td>{g.email}</td>
-                    <td>{g.code}</td>
-                  </tr>
-                ))}
+                {guests
+                  .filter(g =>
+                    g.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    g.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    g.code.toLowerCase().includes(searchTerm.toLowerCase())
+                  )
+                  .map((g, idx) => (
+                    <tr key={g.id || idx}>
+                      <td>{g.name}</td>
+                      <td>{g.email}</td>
+                      <td>{g.code}</td>
+                      <td>
+                        <button
+                          style={{ background: '#d72660', color: '#fff', border: 'none', borderRadius: '6px', padding: '0.3rem 0.7rem', cursor: 'pointer', fontSize: '0.8rem' }}
+                          onClick={() => handleDeleteGuest(g.id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           )}
