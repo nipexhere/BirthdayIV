@@ -164,7 +164,7 @@ function App() {
           <h3>Registered Guests</h3>
           <input
             type="text"
-            placeholder="Search by name, email, or code"
+            placeholder="Search by name or code"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem', borderRadius: '6px', border: '1px solid #ffd700', fontSize: '1rem' }}
@@ -178,7 +178,6 @@ function App() {
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Email</th>
                   <th>Invite Code</th>
                   {/* <th>Action</th> */}
                 </tr>
@@ -193,7 +192,6 @@ function App() {
                   .map((g, idx) => (
                     <motion.tr key={g.id || idx} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
                       <td>{g.name}</td>
-                      <td>{g.email}</td>
                       <td>{g.code}</td>
                       {/* <td>
                         <motion.button
