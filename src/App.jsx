@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { supabase } from './supabaseClient';
 import './App.css';
 
@@ -8,33 +9,34 @@ function generateInviteCode(name) {
 }
 
 function App() {
-  const [searchTerm, setSearchTerm] = useState('');
-  // Delete guest from Supabase
-  const handleDeleteGuest = async (guestId) => {
-    await supabase.from('guests').delete().eq('id', guestId);
-    // Refresh guest list
-    supabase
-      .from('guests')
-      .select('*')
-      .then(({ data, error }) => {
-        if (!error) {
-          setGuests(data);
-        }
-      });
-  };
+  const ADMIN_PASS = 'uncle2025'; 
+  const [adminError, setAdminError] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminMode, setAdminMode] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [registered, setRegistered] = useState(false);
   const [inviteCode, setInviteCode] = useState('');
   const [guests, setGuests] = useState([]);
   const [loadingGuests, setLoadingGuests] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const [adminMode, setAdminMode] = useState(false);
-  const [adminPassword, setAdminPassword] = useState('');
-  const [adminError, setAdminError] = useState('');
+  useEffect(() => {
+    if (adminMode === true) {
+      setLoadingGuests(true);
+      supabase
+        .from('guests')
+        .select('*')
+        .then(({ data, error }) => {
+          if (!error) {
+            setGuests(data);
+          }
+          setLoadingGuests(false);
+        });
+    }
+  }, [adminMode, registered]);
 
-  const ADMIN_PASS = 'uncle2025'; 
-
+  // Registration handler
   const handleRegister = async (e) => {
     e.preventDefault();
     if (!name || !email) return;
@@ -51,32 +53,63 @@ function App() {
     }
   };
 
-  // Fetch guests from Supabase for admin view
-  useEffect(() => {
-    if (adminMode === true) {
-      setLoadingGuests(true);
-      supabase
-        .from('guests')
-        .select('*')
-        .then(({ data, error }) => {
-          if (!error) {
-            setGuests(data);
-          }
-          setLoadingGuests(false);
-        });
-    }
-  }, [adminMode, registered]);
-
+  // Delete guest from Supabase
+  const handleDeleteGuest = async (guestId) => {
+    await supabase.from('guests').delete().eq('id', guestId);
+    // Refresh guest list
+    supabase
+      .from('guests')
+      .select('*')
+      .then(({ data, error }) => {
+        if (!error) {
+          setGuests(data);
+        }
+      });
+  };
   return (
-    <div className="birthday-container">
+    <motion.div className="birthday-container"
+  initial={{ y: 40 }}
+  animate={{ y: 0 }}
+      transition={{ duration: 1.2 }}
+    >
       {/* Invitation Header */}
-      <header className="birthday-header">
-        <h1 className="shhh">Shhh...</h1>
-        <h2 className="surprise">IT’S A SURPRISE!</h2>
-        <p className="subtitle">PLEASE JOIN US TO CELEBRATE</p>
-        <h2 className="celebrant">Babalola Olusegun Adisa’s 75th Birthday</h2>
+      <motion.header
+        className="birthday-header"
+  initial={{ y: -30 }}
+  animate={{ y: [0, -10, 0, 10, 0] }}
+        transition={{ duration: 4, repeat: Infinity, repeatType: 'reverse' }}
+      >
+        <motion.h1
+          className="shhh"
+    initial={{ scale: 0.8 }}
+    animate={{ scale: 1, y: [0, -8, 0, 8, 0] }}
+          transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse' }}
+        >Shhh...</motion.h1>
+        <motion.h2
+          className="surprise"
+    initial={{ x: -50 }}
+    animate={{ x: 0, y: [0, 10, 0, -10, 0] }}
+          transition={{ duration: 3.5, repeat: Infinity, repeatType: 'reverse' }}
+        >IT’S A SURPRISE!</motion.h2>
+        <motion.p
+          className="subtitle"
+    initial={{ x: 50 }}
+    animate={{ x: 0, y: [0, -6, 0, 6, 0] }}
+          transition={{ duration: 2.8, repeat: Infinity, repeatType: 'reverse' }}
+        >PLEASE JOIN US TO CELEBRATE</motion.p>
+        <motion.h2
+          className="celebrant"
+    initial={{}}
+    animate={{ y: [0, 12, 0, -12, 0] }}
+          transition={{ duration: 4.2, repeat: Infinity, repeatType: 'reverse' }}
+        >Babalola Olusegun Adisa’s 75th Birthday</motion.h2>
 
-        <div className="event-details">
+        <motion.div
+          className="event-details"
+    initial={{}}
+    animate={{ y: [0, -10, 0, 10, 0] }}
+          transition={{ duration: 3.8, delay: 0.5, repeat: Infinity, repeatType: 'reverse' }}
+        >
           <p><b>DRESS CODE:</b> Blue, White with a touch of Gold</p>
           <p><b>DATE:</b> October 18, 2025</p>
           <p><b>TIME:</b> 12:00pm</p>
@@ -84,23 +117,24 @@ function App() {
              16-18 Candos Road, Baruwa, Ipaja, Lagos</p>
           <p><b>RSVP:</b> Odun Babalola - 08166903924<br />
              Banji Babalola - 08080368950</p>
-        </div>
-      </header>
+        </motion.div>
+      </motion.header>
 
       {/* Admin access button */}
       {!adminMode && (
-        <div style={{ margin: '1rem 0' }}>
-          <button className="gold-button" onClick={() => setAdminMode('prompt')}>
-            Admin Login
-          </button>
-        </div>
+  <motion.div style={{ margin: '1rem 0' }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2 }}>
+          <motion.button className="gold-button" whileHover={{ scale: 1.08 }} transition={{ duration: 0.3 }} onClick={() => setAdminMode('prompt')}>
+            Admin
+          </motion.button>
+        </motion.div>
       )}
 
       {/* Admin password prompt */}
       {adminMode === 'prompt' && (
-        <form
+        <motion.form
           className="invite-form"
           style={{ maxWidth: 300, margin: '0 auto', marginBottom: '1rem' }}
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2 }}
           onSubmit={e => {
             e.preventDefault();
             if (adminPassword === ADMIN_PASS) {
@@ -119,14 +153,14 @@ function App() {
             onChange={e => setAdminPassword(e.target.value)}
             required
           />
-          <button type="submit" className="gold-button">Login</button>
+          <motion.button type="submit" className="gold-button" whileHover={{ scale: 1.08 }} transition={{ duration: 0.3 }}>Login</motion.button>
           {adminError && <div style={{ color: 'red', marginTop: '0.5rem' }}>{adminError}</div>}
-        </form>
+        </motion.form>
       )}
 
       {/* Admin view */}
       {adminMode === true && (
-        <div className="admin-view">
+  <motion.div className="admin-view" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2 }}>
           <h3>Registered Guests</h3>
           <input
             type="text"
@@ -140,7 +174,7 @@ function App() {
           ) : guests.length === 0 ? (
             <p>No guests have registered yet.</p>
           ) : (
-            <table>
+            <motion.table initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2 }}>
               <thead>
                 <tr>
                   <th>Name</th>
@@ -157,38 +191,42 @@ function App() {
                     g.code.toLowerCase().includes(searchTerm.toLowerCase())
                   )
                   .map((g, idx) => (
-                    <tr key={g.id || idx}>
+                    <motion.tr key={g.id || idx} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
                       <td>{g.name}</td>
                       <td>{g.email}</td>
                       <td>{g.code}</td>
                       <td>
-                        <button
+                        <motion.button
                           style={{ background: '#d72660', color: '#fff', border: 'none', borderRadius: '6px', padding: '0.3rem 0.7rem', cursor: 'pointer', fontSize: '0.8rem' }}
+                          whileHover={{ scale: 1.1, backgroundColor: '#a61b46' }}
+                          transition={{ duration: 0.3 }}
                           onClick={() => handleDeleteGuest(g.id)}
                         >
                           Delete
-                        </button>
+                        </motion.button>
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))}
               </tbody>
-            </table>
+            </motion.table>
           )}
-          <button
+          <motion.button
             className="logout-button"
+            whileHover={{ scale: 1.08 }}
+            transition={{ duration: 0.3 }}
             onClick={() => {
               setAdminMode(false);
               setAdminPassword('');
             }}
           >
             Logout
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       )}
 
       {/* Registration form or Invite code */}
       {!registered ? (
-        <form className="invite-form" onSubmit={handleRegister}>
+  <motion.form className="invite-form" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2 }} onSubmit={handleRegister}>
           <h3>Register to Attend</h3>
           <input
             type="text"
@@ -204,22 +242,23 @@ function App() {
             onChange={e => setEmail(e.target.value)}
             required
           />
-          <button type="submit" className="gold-button">Get My Invite Code</button>
-        </form>
+          <motion.button type="submit" className="gold-button" whileHover={{ scale: 1.08 }} transition={{ duration: 0.3 }}>Get My Invite Code</motion.button>
+        </motion.form>
       ) : (
-        <div className="invite-success">
+  <motion.div className="invite-success" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2 }}>
           <h3>Thank you for registering!</h3>
           <p>Your unique invite code:</p>
-          <div className="invite-code">{inviteCode}</div>
+          <motion.div className="invite-code" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 1.2 }}>{inviteCode}</motion.div>
           <p>Please show this code at the entrance.</p>
-        </div>
+        </motion.div>
       )}
 
-      <footer className="birthday-footer">
+  <motion.footer className="birthday-footer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.7 }}>
         <p>Made with 💙 & ✨ for Adisa’s 75th Birthday</p>
-      </footer>
-    </div>
+      </motion.footer>
+    </motion.div>
   );
+// ...existing code...
 }
 
 export default App;

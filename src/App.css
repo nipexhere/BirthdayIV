@@ -1,3 +1,19 @@
+@media (max-width: 600px) {
+  .admin-view table {
+    font-size: 0.8rem;
+    table-layout: fixed;
+    width: 100%;
+  }
+  .admin-view th, .admin-view td {
+    padding: 0.3rem;
+    word-break: break-word;
+    white-space: normal;
+    max-width: 80px;
+  }
+  .admin-view th {
+    font-size: 0.8rem;
+  }
+}
 /* Mobile Responsive Styles */
 @media (max-width: 600px) {
   .birthday-container::before {
