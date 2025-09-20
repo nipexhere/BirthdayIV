@@ -70,45 +70,45 @@ function App() {
     <motion.div className="birthday-container"
   initial={{ y: 40 }}
   animate={{ y: 0 }}
-      transition={{ duration: 1.2 }}
+  transition={{ duration: 2 }}
     >
       {/* Invitation Header */}
       <motion.header
         className="birthday-header"
   initial={{ y: -30 }}
   animate={{ y: [0, -10, 0, 10, 0] }}
-        transition={{ duration: 4, repeat: Infinity, repeatType: 'reverse' }}
+  transition={{ duration: 2 }}
       >
         <motion.h1
           className="shhh"
     initial={{ scale: 0.8 }}
-    animate={{ scale: 1, y: [0, -8, 0, 8, 0] }}
-          transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse' }}
+  animate={{ scale: 1, y: [0, -8, 0, 8, 0] }}
+  transition={{ duration: 2 }}
         >Shhh...</motion.h1>
         <motion.h2
           className="surprise"
     initial={{ x: -50 }}
-    animate={{ x: 0, y: [0, 10, 0, -10, 0] }}
-          transition={{ duration: 3.5, repeat: Infinity, repeatType: 'reverse' }}
+  animate={{ x: 0, y: [0, 10, 0, -10, 0] }}
+  transition={{ duration: 2 }}
         >IT’S A SURPRISE!</motion.h2>
         <motion.p
           className="subtitle"
     initial={{ x: 50 }}
-    animate={{ x: 0, y: [0, -6, 0, 6, 0] }}
-          transition={{ duration: 2.8, repeat: Infinity, repeatType: 'reverse' }}
+  animate={{ x: 0, y: [0, -6, 0, 6, 0] }}
+  transition={{ duration: 2 }}
         >PLEASE JOIN US TO CELEBRATE</motion.p>
         <motion.h2
           className="celebrant"
     initial={{}}
-    animate={{ y: [0, 12, 0, -12, 0] }}
-          transition={{ duration: 4.2, repeat: Infinity, repeatType: 'reverse' }}
+  animate={{ y: [0, 12, 0, -12, 0] }}
+  transition={{ duration: 1.2 }}
         >Babalola Olusegun Adisa’s 75th Birthday</motion.h2>
 
         <motion.div
           className="event-details"
     initial={{}}
-    animate={{ y: [0, -10, 0, 10, 0] }}
-          transition={{ duration: 3.8, delay: 0.5, repeat: Infinity, repeatType: 'reverse' }}
+  animate={{ y: [0, -10, 0, 10, 0] }}
+  transition={{ duration: 3.8, delay: 0.5, repeat: Infinity, repeatType: 'reverse' }}
         >
           <p><b>DRESS CODE:</b> Blue, White with a touch of Gold</p>
           <p><b>DATE:</b> October 18, 2025</p>
