@@ -180,7 +180,7 @@ function App() {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Invite Code</th>
-                  <th>Action</th>
+                  {/* <th>Action</th> */}
                 </tr>
               </thead>
               <tbody>
@@ -195,7 +195,7 @@ function App() {
                       <td>{g.name}</td>
                       <td>{g.email}</td>
                       <td>{g.code}</td>
-                      <td>
+                      {/* <td>
                         <motion.button
                           style={{ background: '#d72660', color: '#fff', border: 'none', borderRadius: '6px', padding: '0.3rem 0.7rem', cursor: 'pointer', fontSize: '0.8rem' }}
                           whileHover={{ scale: 1.1, backgroundColor: '#a61b46' }}
@@ -204,7 +204,7 @@ function App() {
                         >
                           Delete
                         </motion.button>
-                      </td>
+                      </td> */}
                     </motion.tr>
                   ))}
               </tbody>
